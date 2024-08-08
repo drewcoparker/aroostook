@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model members {
+  address                     String?      @db.VarChar(255)
+  bioguideid                  String       @id @db.VarChar(255)
+  birthyear                   String?      @db.VarChar(4)
+  chamber                     String?      @db.VarChar(50)
+  cosponsoredlegislationcount Int?
+  currentmember               Boolean?
+  directordername             String?      @db.VarChar(255)
+  district                    Int?
+  firstname                   String?      @db.VarChar(255)
+  honorificname               String?      @db.VarChar(255)
+  imageurl                    String?      @db.VarChar(255)
+  invertedordername           String?      @db.VarChar(255)
+  lastname                    String?      @db.VarChar(255)
+  middlename                  String?      @db.VarChar(255)
+  officialwebsiteurl          String?      @db.VarChar(255)
+  partyabbreviation           String?      @db.VarChar(10)
+  partyname                   String?      @db.VarChar(255)
+  phonenumber                 String?      @db.VarChar(20)
+  sponsoredlegislationcount   Int?
+  state                       String?      @db.VarChar(30)
+  termcount                   Int?
+  memberterm                  memberterm[]
+}
+
+model memberterm {
+  id         Int     @id @default(autoincrement())
+  memberid   String  @db.VarChar(255)
+  termnumber Int
+  members    members @relation(fields: [memberid], references: [bioguideid], onDelete: NoAction, onUpdate: NoAction, map: "memberterm_bioguideid_fkey")
+  terms      terms   @relation(fields: [termnumber], references: [number], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([memberid, termnumber], map: "unique_member_term")
+}
+
+model terms {
+  endyear    Int?
+  name       String?      @db.VarChar(255)
+  number     Int          @id
+  startyear  Int?
+  memberterm memberterm[]
+}
