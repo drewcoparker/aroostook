@@ -1,9 +1,14 @@
 interface ChevronProps {
   direction: 'DOWN' | 'RIGHT';
   colorClass: string;
+  transitionDuration?: string;
 }
 
-export default function Chevron({ direction = 'DOWN', colorClass }: ChevronProps) {
+export default function Chevron({
+  direction = 'DOWN',
+  colorClass,
+  transitionDuration = '0.2s',
+}: ChevronProps) {
   return (
     <>
       <svg
@@ -17,9 +22,14 @@ export default function Chevron({ direction = 'DOWN', colorClass }: ChevronProps
         strokeWidth="1.5"
         viewBox="0 0 24 24"
         width="24"
-        style={{ width: '20px', height: '20px' }}
+        style={{
+          width: '20px',
+          height: '20px',
+          transform: direction === 'RIGHT' ? 'rotate(-90deg)' : 'rotate(0deg)',
+          transition: `transform ${transitionDuration} ease-in-out`,
+        }}
       >
-        <path d={direction === 'RIGHT' ? 'M9 18l6-6-6-6' : 'M6 9l6 6 6-6'}></path>
+        <path d="M6 9l6 6 6-6"></path>
       </svg>
     </>
   );
