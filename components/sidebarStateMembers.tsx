@@ -21,10 +21,6 @@ export default function SidebarStateMembers({
   setActiveMember,
   memberToScrollToAfterRefresh,
 }: SidebarStateMemberProps) {
-  if (!members || !Array.isArray(members) || members.length === 0) {
-    return null;
-  }
-
   const memberRefs = useRef<Map<string, HTMLLIElement | null>>(new Map());
 
   useEffect(() => {
@@ -44,6 +40,10 @@ export default function SidebarStateMembers({
       });
     }, 200);
   }, [memberToScrollToAfterRefresh]);
+
+  if (!members || !Array.isArray(members) || members.length === 0) {
+    return null;
+  }
 
   return (
     <>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import Chevron from './chevron';
 
 export default function SidebarToggle({
@@ -13,6 +13,8 @@ export default function SidebarToggle({
   toggleFromRefresh: boolean;
 }>) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [contentHeight, setContentHeight] = useState('0px');
+  const [transitionDuration, setTransitionDuration] = useState('0.3s');
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -21,18 +23,24 @@ export default function SidebarToggle({
     }
   }, [toggleFromRefresh]);
 
+  useLayoutEffect(() => {
+    if (contentRef.current) {
+      const height = isExpanded ? `${contentRef.current.scrollHeight}px` : '0px';
+      const duration = Math.min(0.15 + contentRef.current.scrollHeight / 1000, 0.5);
+      setContentHeight(height);
+      setTransitionDuration(`${duration}s`);
+    }
+  }, [isExpanded]);
+
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
   };
-
-  const contentHeight =
-    isExpanded && contentRef.current ? `${contentRef.current.scrollHeight}px` : '0px';
 
   const ulStyle = {
     height: contentHeight,
     opacity: isExpanded ? 1 : 0.75,
     overflow: 'hidden',
-    transition: 'opacity 0.15s ease-in-out 0s, height 0.2s ease-in-out 0s',
+    transition: `height ${transitionDuration} ease-in-out, opacity ${transitionDuration} ease-in-out`,
   };
 
   if (!children || !Array.isArray(children)) {
@@ -48,6 +56,7 @@ export default function SidebarToggle({
           colorClass={
             isActive ? 'text-sky-500 hover:text-sky-700' : 'text-gray-700 hover:text-gray-900'
           }
+          transitionDuration={transitionDuration}
         />
       </div>
       <div ref={contentRef} style={ulStyle}>
